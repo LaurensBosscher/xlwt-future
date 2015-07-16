@@ -39,7 +39,8 @@ class Row(object):
                  "collapse",
                  "hidden",
                  "space_above",
-                 "space_below"]
+                 "space_below",
+                 "compatible_mode"]
 
     def __init__(self, rowx, parent_sheet):
         if not (isinstance(rowx, int) and 0 <= rowx <= 65535):
@@ -62,7 +63,7 @@ class Row(object):
         self.hidden = 0
         self.space_above = 0
         self.space_below = 0
-
+        self.compatible_mode = False,
 
     def __adjust_height(self, style):
         twips = style.font.height
@@ -74,12 +75,14 @@ class Row(object):
         if pix > self.__height_in_pixels:
             self.__height_in_pixels = pix
 
-
     def __adjust_bound_col_idx(self, *args):
         for arg in args:
             iarg = int(arg)
-            if not ((0 <= iarg <= 255) and arg == iarg):
-                raise ValueError("column index (%r) not an int in range(256)" % arg)
+            if self.compatible_mode:
+                # The XLS specifications allow for only 256 columns in a spreadsheet, however most applications can
+                # handle this just fine
+                if not ((0 <= iarg <= 255) and arg == iarg):
+                    raise ValueError("column index (%r) not an int in range(256)" % arg)
             sheet = self.__parent
             if iarg < self.__min_col_idx:
                 self.__min_col_idx = iarg
