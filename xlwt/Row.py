@@ -78,7 +78,7 @@ class Row(object):
     def __adjust_bound_col_idx(self, *args):
         for arg in args:
             iarg = int(arg)
-            if self.compatible_mode:
+            if self.compatible_mode[0]:
                 # The XLS specifications allow for only 256 columns in a spreadsheet, however most applications can
                 # handle this just fine
                 if not ((0 <= iarg <= 255) and arg == iarg):
